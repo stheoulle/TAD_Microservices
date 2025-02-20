@@ -1,21 +1,20 @@
 == Q2: How do I manage the authentication system with an OIDC?
 
-== What is OpenID ?
+== What is OpenID?
 
-verify the identity of users based on the authentication performed by an Authorization Server and obtain user profile information in an interoperable and REST-like manner.
+OpenID is a protocol that allows for the verification of user identities based on authentication performed by an Authorization Server and obtains user profile information in an interoperable and REST-like manner.
 
 === How does OpenID Connect work?
 
-OpenID Connect ennables an Internet identity ecosystem.
-It follows these steps :
+OpenID Connect enables an Internet identity ecosystem. It follows these steps:
 
 1. The User navigates to a website via a web browser.
-2. The User clicks sign-in and types their username and password
+2. The User clicks sign-in and types their username and password.
 3. The RP (Client) sends an authentication request to the OpenID Provider (OP).
 4. The OP authenticates the User and obtains authorization.
 5. The OP sends an Identity Token to the RP and usually an Access Token.
-6. The RP can send a request with Access Token to the User device.
-7. the UserInfo Endpoint returns Claims about the End-User.
+6. The RP can send a request with the Access Token to the User device.
+7. The UserInfo Endpoint returns Claims about the End-User.
 
 === What are the benefits of OpenID Connect?
 
@@ -35,11 +34,11 @@ It follows these steps :
 - **Authorization Server**: The server that authenticates the End-User and issues Access Tokens.
 - **Identity Token**: A JWT that contains information about the End-User.
 
-== What is Keycloak ?
+== What is Keycloak?
 
 Keycloak is an open-source Identity and Access Management solution that makes it easy to secure applications and services with little to no code.
 
-=== How does Keycloak works ?
+=== How does Keycloak work?
 
 Keycloak works by providing an authentication server that can be used to secure applications and services. It supports OpenID Connect, OAuth 2.0, and SAML 2.0 protocols, making it easy to integrate with existing systems.
 
@@ -58,14 +57,14 @@ Keycloak provides a wide range of features, including:
 - REST API
 - Scalability
 
-=== What are the main components of Keycloak ?
+=== What are the main components of Keycloak?
 
-Keycloak has 2 main components, including:
+Keycloak has two main components, including:
 
-- **Keycloak Server**: The server that provides the authentication and authorization services. It includes the API and a graphical interface
+- **Keycloak Server**: The server that provides the authentication and authorization services. It includes the API and a graphical interface.
 - **Keycloak Client**: The client that interacts with the Keycloak server to authenticate users and obtain tokens.
 
-== How to integrate Keycloak with an OIDC ?
+== How to integrate Keycloak with an OIDC?
 
 To integrate Keycloak with an OIDC, we need to follow these steps:
 
@@ -75,7 +74,7 @@ To integrate Keycloak with an OIDC, we need to follow these steps:
 4. **Integrate the Client**: Integrate the client with the application by adding the necessary code to handle the authentication flow.
 5. **Test the Integration**: Test the integration by logging in to the application and verifying that the authentication works as expected.
 
-== How to secure an application with Keycloak ?
+== How to secure an application with Keycloak?
 
 To secure an application with Keycloak, we need to follow these steps:
 
@@ -86,50 +85,48 @@ To secure an application with Keycloak, we need to follow these steps:
 
 == Architecture Diagram
 
-=== **Identifier les composants :**
-- **Client (Frontend) :** Interface utilisateur (web ou mobile).
-- **Serveur d'application (Backend) :** Logique métier et API.
-- **Keycloak Server :** Serveur d'authentification et d'autorisation.
-- **Base de données :** Stockage des données utilisateur et de l'application.
-- **Services externes :** Google OAuth, Polytech LDAP.
+=== Identify the components:
+- **Client (Frontend)**: User interface (web or mobile).
+- **Application Server (Backend)**: Business logic and API.
+- **Keycloak Server**: Authentication and authorization server.
+- **Database**: Storage for user and application data.
+- **External Services**: Google OAuth, Polytech LDAP.
 
+=== Define the interactions:
+- Authentication flow between the client, application server, and Keycloak.
+- Integration with Google OAuth and Polytech LDAP for authentication.
+- Communication between the application server and the database.
 
-=== **Définir les interactions :**
-  - Flux d'authentification entre le client, le serveur d'application et Keycloak.
-  - Intégration avec Google OAuth et Polytech LDAP pour l'authentification.
-  - Communication entre le serveur d'application et la base de données.
+== Deployment Diagram
 
-== Deployement Diagram
+=== Identify the infrastructure:
+- Physical or virtual servers.
+- Cloud services (AWS, Azure, GCP).
+- Containers (Docker, Kubernetes).
 
-=== **Identifier l'infrastructure :**
-  - Serveurs physiques ou virtuels.
-  - Services cloud (AWS, Azure, GCP).
-  - Conteneurs (Docker, Kubernetes).
-
-=== **Définir la topologie :**
-  - Placement des composants sur les serveurs/conteneurs.
-  - Configuration réseau (load balancers, firewalls).
+=== Define the topology:
+- Placement of components on servers/containers.
+- Network configuration (load balancers, firewalls).
 
 == Sequence Diagram
 
-=== **Scénarios à couvrir :**
-  - Création de compte utilisateur (vanilla, via Polytech, via Google).
-  - Connexion utilisateur (vanilla, Polytech).
-  - Association d'un compte Google avec un compte Beep.
+=== Scenarios to cover:
+- User account creation (vanilla, via Polytech, via Google).
+- User login (vanilla, Polytech).
+- Association of a Google account with a Beep account.
 
-=== **Définir les acteurs et les composants :**
-  - Utilisateur, Client, Serveur d'application, Keycloak, Google OAuth, Polytech LDAP.
+=== Define the actors and components:
+- User, Client, Application Server, Keycloak, Google OAuth, Polytech LDAP.
 
-=== **Décrire les étapes :**
-  - Pour chaque scénario, listez les étapes d'interaction entre les composants.
-  - Par exemple, pour la création de compte via Google :
-    1. L'utilisateur clique sur "S'inscrire avec Google".
-    2. Le client redirige vers Google OAuth.
-    3. Google authentifie l'utilisateur et redirige vers Keycloak avec un code d'autorisation.
-    4. Keycloak échange le code contre un token.
-    5. Keycloak crée un compte utilisateur dans Beep.
-    6. L'utilisateur est redirigé vers l'application avec un token d'accès.
-
+=== Describe the steps:
+- For each scenario, list the interaction steps between the components.
+- For example, for account creation via Google:
+  1. The user clicks on "Sign up with Google."
+  2. The client redirects to Google OAuth.
+  3. Google authenticates the user and redirects to Keycloak with an authorization code.
+  4. Keycloak exchanges the code for a token.
+  5. Keycloak creates a user account in Beep.
+  6. The user is redirected to the application with an access token.
 
 == POC (Proof of Concept)
 
