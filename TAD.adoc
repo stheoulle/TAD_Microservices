@@ -1,0 +1,123 @@
+:project-name: TAD Micro-services
+:version: 1.0.0
+
+= {project-name} Documentation
+:author: Sarah THEOULLE
+:email: s.theoulle@outlook.fr
+
+== Assumptions
+
+We are looking to migrate BEEP to a microservices architecture.
+
+The specifications are the same as described during all previous iterations of BEEP.
+
+I will answer 10 questions:
+
+- Via the redaction of the TAD (components architecture, sequences diagram, deployment architecture, etc.)
+- Via the production of POCs (when mentioned)
+- Using draw.io
+- Redaction using AsciiDoc
+
+Prohibited technologies:
+
+- Message queue
+- CQRS
+- Event Sourcing
+
+
+== Q1: Functional Neighborhoods and Microservices
+
+- Define functionalities in user story format
+- Organize into functional neighborhoods
+- Propose an architecture diagram
+
+== Q2: Authentication System with OIDC
+
+- Architecture diagram
+- Deployment diagram
+- Sequence diagrams for user account actions
+- Constraints: Use Keycloak, support Polytech LDAP and Google account linking
+- POC: Modify Beep, provide deployment guide and source code
+
+== Q3: Inter-Microservices Communication
+
+- Approach explanation
+- Sequence diagram of service communication
+- POC: HelloWorld microservices communication
+
+== Q4: Authorization System Implementation
+
+- Define authorization service
+- Technical and functional architecture
+- Sequence diagrams for key actions
+- Managing permissions at various levels
+
+== Q5: Logs and Query Tracing
+
+- Define system and technical components
+- Deployment diagram
+- Sequence diagram for query tracing
+- Security-based logs for SOC integration
+
+== Q6: Production-Ready System
+
+- Data security, backup, and restore
+- Observability and service supervision
+- High availability and continuity plans
+- Detailed diagrams
+
+== Q7: Infrastructure Security NO
+
+- Mobile application integration (BFF model)
+- Security zones and network separation (DMZ, etc.)
+- Cryptography, certificates, and protocol choices
+
+== Q8: Search Engine Integration
+
+- Functional and technical proposal
+- Full-text indexing approach
+- UI mockup of the search feature
+- Technical stack and indexing sequence diagram
+
+== Q9: Platform Security Management NO
+
+- Security analysis for network and microservices
+- Communication security between microservices
+- Security proposal with sequence diagrams
+- POC: Securing HelloWorld microservices
+
+== Q10: UI Application Integration
+
+- Microservice integration for a seamless UX
+- Example: Video streaming integration
+- Necessary diagrams
+- POC: Replacing Beep conference app with microservices-based QCM
+
+== Timeline
+
+- *3 February*: Goals announcement
+- *5 March*: Draft report submission (30-50% answers, diagrams, and images)
+- *30 March*: Complete V0 file (100% answers, 80% diagrams, 50-70% POCs)
+- *30 May 23:42*: Final submission of Git repository containing:
+  - AsciiDoc file
+  - Images (PNG + Draw.io sources)
+  - Production URLs for POCs and repositories
+
+== Goals Announcement
+
+The goal is to implement a microservices architecture for the application.
+
+- The monolith is too big and needs to be split.
+- New technical layers are required for maintainability and smooth operation.
+- Choose 8 out of the 10 questions (bonus for covering all).
+- *Mandatory questions*: 1, 2, 3, 4, 5, and 6.
+
+== Additional Considerations
+
+- DAT vs. DAA complementarity discussion
+- Documentation iteration process: initial deployment, real-world constraints, on-premise vs. cloud iterations
+- Levels of DAT documentation (light, advanced, very detailed)
+
+
+
+This is the documentation for {project-name} version {version}.
