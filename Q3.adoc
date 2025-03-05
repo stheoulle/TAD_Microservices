@@ -1,4 +1,4 @@
-= Q3. Inter microservices communicationa
+= Q3. Inter microservices communication
 
 == Communication Protocols
 
