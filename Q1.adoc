@@ -191,6 +191,9 @@ Here's a structured way to categorize them into functional neighborhoods:
 
 The architecture diagram represents these microservices as distinct components, each responsible for a specific set of functionalities. Each service communicates with others through well-defined APIs, ensuring loose coupling and high cohesion. This architecture promotes scalability, maintainability, and independent deployment of each service.
 
+image::Architecturediagram.drawio.png[]
+
+
 == Key Considerations
 
 - *Single Responsibility Principle*: Each microservice should focus on a single responsibility, ensuring that it does one thing well.

@@ -121,3 +121,10 @@ The goal is to implement a microservices architecture for the application.
 
 
 This is the documentation for {project-name} version {version}.
+
+include::Q1.adoc[]
+include::Q2.adoc[]
+include::Q3.adoc[]
+include::Q4.adoc[]
+include::Q5.adoc[]
+include::Q6.adoc[]

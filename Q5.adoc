@@ -1,0 +1,126 @@
+= Logging and Query Tracing System
+
+== System and Technical Components
+
+To effectively trace logs and queries, implement the following components:
+
+1. *Logging Framework*: Use a logging framework like winston in Adonis to log events, errors, and other relevant information. 
+
+2. *Centralized Log Management*: Use Loki with Grafana to aggregate and visualize logs from different services. Loki is a horizontally scalable, highly available, multi-tenant log aggregation system.
+
+3. *Distributed Tracing*: Implement distributed tracing with Tempo to trace requests as they flow through different services. Tempo is a highly scalable and efficient tracing backend.
+
+4. *API Gateway*: Acts as an entry point for all client requests and can log request/response data.
+
+5. *Monitoring Tools*: Use Grafana with Mimir for monitoring and visualizing system metrics. Mimir is a scalable, multi-tenant time series database that integrates seamlessly with Grafana.
+
+6. *Security Information and Event Management (SIEM)*: Integrate with a SIEM system for security-based logs and incident response.
+
+
+== Deployment Diagram (change to adapt with OIDC)
+
+[plantuml, deployment-diagram, png]
+----
+                                  +---------------------+
+                                  |     API Gateway     |
+                                  +---------+-----------+
+                                            |
+                                            |
+                                            v
++------------------+       +----------------+----------------+       +------------------+
+|                  |       |                |                |       |                  |
+|   User Service   |<----->|  Auth Service  |<------------->|  Resource Service    |
+|                  |       |                |                |       |                  |
++------------------+       +----------------+----------------+       +------------------+
+            ^                         ^                   ^                   ^
+            |                         |                   |                   |
+            v                         v                   v                   v
++------------------+       +----------------+----------------+       +------------------+
+|   Logging        |<----->|  Centralized   |<------------->|  Distributed Tracing  |
+|   Framework      |       |  Log Management|                |  |
++------------------+       +----------------+----------------+       +------------------+
+            ^                         ^
+            |                         |
+            v                         v
++------------------+       +----------------+----------------+
+|  Monitoring      |<----->|  Security Information and Event  |
+|  Tools (e.g.,    |       |  Management (SIEM) System        |
+|  Prometheus,     |       |                                  |
+|  Grafana)        |       +----------------+----------------+
++------------------+
+
+----
+
+== Sequence Diagram for a Query (Change for OIDC)
+
+Below is a sequence diagram for a user login request, illustrating how the system works with logging and tracing:
+
+[plantuml, sequence-diagram, png]
+----
+User                API Gateway               User Service                Auth Service                Log Management                Distributed Tracing
+ |                       |                          |                             |                             |                             |
+ |---(1) Login Request-->|                          |                             |                             |                             |
+ |                       |---(2) Log Request-------->|                             |                             |                             |
+ |                       |---(3) Authenticate User->|                             |                             |                             |
+ |                       |                          |---(4) Verify Credentials-->|                             |                             |
+ |                       |                          |                             |---(5) Log Credential Check->|                             |
+ |                       |                          |                             |---(6) Trace Request-------->|                             |
+ |                       |                          |<--(7) Return JWT Token-----|                             |                             |
+ |                       |<--(8) Return JWT Token---|                             |                             |                             |
+ |<--(9) Return JWT Token|                          |                             |                             |                             |
+ |                       |---(10) Log Response------>|                             |                             |                             |
+ |                       |                          |                             |                             |---(11) Trace Response------>|
+
+----
+
+== Security-Based Logs for Managed SOC
+
+To integrate with a managed Security Operations Center (SOC), consider the following needs:
+
+1. *Comprehensive Logging*
+   - **Objective**: Capture all security-relevant events to provide a complete audit trail.
+   - **Implementation**:
+     - **Authentication Attempts**: Log both successful and failed login attempts, including details like user ID, timestamp, and IP address.
+     - **Authorization Failures**: Record instances where users attempt to access resources they are not authorized to view.
+     - **Data Access Events**: Log access to sensitive data, including who accessed it, when, and from where.
+     - **System Changes**: Track changes to system configurations, user permissions, and other critical settings.
+
+2. *Real-time Monitoring*
+   - **Objective**: Detect and respond to security incidents as they occur.
+   - **Implementation**:
+     - **Monitoring Tools**: Use tools that provide real-time visibility into security events and anomalies.
+     - **Alerting**: Set up alerts for suspicious activities, such as multiple failed login attempts or unusual data access patterns.
+     - **Automated Responses**: Implement automated responses to common threats, such as blocking IP addresses after multiple failed login attempts.
+
+3. *Compliance*
+   - **Objective**: Ensure that logging practices comply with relevant regulations and standards.
+   - **Implementation**:
+     - **GDPR**: Ensure that logs containing personal data are handled in compliance with GDPR requirements, including data minimization and anonymization.
+
+4. *Incident Response*
+   - **Objective**: Define and implement procedures for responding to security incidents.
+   - **Implementation**:
+     - **Incident Response Plan**: Develop a plan that outlines the steps to take in response to different types of security incidents.
+     - **Log Analysis**: Include procedures for analyzing logs to identify the root cause of incidents.
+     - **Forensic Investigation**: Ensure that logs are preserved and available for forensic analysis.
+
+5. *Integration with SIEM*
+   - **Objective**: Use a Security Information and Event Management (SIEM) system to correlate logs from various sources and detect potential security threats.
+   - **Implementation**:
+     - **Log Aggregation**: Collect logs from all relevant sources, including applications, servers, and network devices.
+     - **Correlation Rules**: Define rules to correlate events across different logs and identify potential security threats.
+     - **Threat Detection**: Use the SIEM system to detect and alert on known threat patterns and anomalies.
+
+6. *Access Control*
+   - **Objective**: Implement strict access controls to protect log data from unauthorized access.
+   - **Implementation**:
+     - **Role-Based Access Control (RBAC)**: Define roles and permissions to control access to log data.
+     - **Encryption**: Encrypt log data both at rest and in transit to protect it from unauthorized access.
+     - **Audit Access**: Regularly audit access to log data to ensure compliance with access control policies.
+
+=== Benefits
+
+- **Operational Visibility**: Comprehensive logging and real-time monitoring provide visibility into security events, enabling proactive threat detection and response.
+- **Incident Response**: Defined incident response procedures and integration with SIEM systems enable quick and effective response to security incidents.
+- **Access Control**: Strict access controls protect log data from unauthorized access, maintaining the integrity and confidentiality of security-relevant information.
+

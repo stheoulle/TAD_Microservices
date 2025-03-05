@@ -1,0 +1,175 @@
+= Q3. Inter microservices communicationa
+
+== Communication Protocols
+
+- *HTTP/HTTPS*: The most common protocol for inter-microservice communication. It is widely supported, easy to use, and can be secured using HTTPS.
+
+== Orchestration Approach
+
+- *API Gateway*: Acts as a single entry point for all client requests. It routes requests to the appropriate microservice and handles tasks like load balancing, authentication, and rate limiting.
+- *Load Balancing*: Distributes incoming traffic across multiple instances of a microservice to ensure no single instance is overwhelmed.
+- *Centralized Logging and Monitoring*: Tools like the LGTM suite can helps monitor the health and performance of microservices.
+
+== Sequence Diagram
+
+Below is a textual representation of a sequence diagram for user authentication involving multiple microservices:
+
+[plantuml, sequence-diagram, png]
+----
+User                API Gateway               Auth Service                Profile Service
+ |                       |                          |                             |
+ |---(1) Login Request-->|                          |                             |
+ |                       |---(2) Forward Request-->|                             |
+ |                       |                          |---(3) Validate Credentials |
+ |                       |                          |<--(4) Return Token---------|
+ |                       |<--(5) Return Token-------|                             |
+ |<--(6) Return Token----|                          |                             |
+ |                       |                          |                             |
+ |---(7) Profile Request->|                          |                             |
+ |                       |---(8) Forward Request-->|                             |
+ |                       |                          |---(9) Fetch Profile Info-->|
+ |                       |                          |<--(10) Return Profile Info-|
+ |                       |<--(11) Return Profile Info|                             |
+ |<--(12) Return Profile Info                        |                             |
+
+----
+
+== Proof of Concept (POC)
+
+To demonstrate inter-microservice communication, we can create a simple "Hello World" example using HTTP and AdonisJS.
+
+=== Microservice 1: Greeting Service
+
+==== Create a new AdonisJS project:
+
+[source, bash]
+----
+npm init adonis-ts-app@latest greeting-service
+cd greeting-service
+----
+
+==== Install necessary dependencies:
+
+[source, bash]
+----
+npm install @adonisjs/core @adonisjs/lucid
+----
+
+==== Create a route and controller to handle the greeting:
+
+**start/routes.ts**
+
+[source, typescript]
+----
+import Route from '@ioc:Adonis/Core/Route'
+
+Route.get('/greet', 'HelloWorldController.index')
+Route.get('/', 'HelloWorldController.index')
+----
+
+**app/Controllers/Http/GreetingsController.ts**
+
+[source, bash]
+----
+node ace make:controller HelloWorldController
+----
+
+[source, typescript]
+----
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+
+export default class HelloWorldController {
+  public async index({ response }: HttpContextContract) {
+    return response.json({ message: 'Hello World' })
+  }
+}
+----
+
+==== Start the Greeting Service:
+
+[source, bash]
+----
+node ace serve --watch
+----
+
+=== Microservice 2: Client Service
+
+1. Create another AdonisJS project:
+
+[source, bash]
+----
+npm init adonis-ts-app@latest client-service
+cd client-service
+----
+
+==== Install necessary dependencies:
+
+[source, bash]
+----
+npm install @adonisjs/core @adonisjs/lucid axios
+----
+
+==== Create a route and controller to handle the client request:
+
+**start/routes.ts**
+
+[source, typescript]
+----
+import Route from '@ioc:Adonis/Core/Route'
+
+Route.get('/', async ({ view }) => {
+  return view.render('welcome')})
+
+Route.get('/hello', 'ClientController.hello')
+----
+
+**app/Controllers/Http/ClientController.ts**
+
+[source, bash]
+----
+node ace make:controller ClientController
+----
+
+[source, typescript]
+----
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import axios from 'axios'
+
+export default class ClientController {
+  public async hello({ response }: HttpContextContract) {
+    try {
+      const res = await axios.get('http://localhost:3334/')
+      const greeting = res.data.message
+      return response.json({ message: `Client Service says: ${greeting}` })
+    } catch (error) {
+      return response.internalServerError({ message: 'Error fetching greeting' })
+    }
+  }
+}
+----
+
+==== Change the port in the `.env` file to 3334:
+
+[source, bash]
+----
+ 
+PORT=3334
+ 
+----
+
+==== Start the Client Service:
+
+[source, bash]
+----
+node ace serve --watch
+----
+
+You can have some issues because of an -s in the name of the controllers.
+If you are still having troubles, make sure to check the official AdonisJS documentation for more information.
+
+== Running the POC
+
+1. Start the Greeting Service on port 3334.
+2. Start the Client Service on port 3333.
+3. Access `http://localhost:3333/hello` to see the communication between the two services.
+

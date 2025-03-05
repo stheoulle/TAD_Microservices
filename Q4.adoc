@@ -1,0 +1,124 @@
+= Authorization System Overview
+
+An authorization system determines whether a user has permission to perform specific actions or access certain resources within an application. It is a critical component of security, ensuring that users can only access data and functionality appropriate to their roles and permissions.
+
+== Authorization Service Definition
+
+An authorization service is responsible for managing and enforcing access control policies. It verifies user permissions based on roles, groups, or other attributes and grants or denies access to resources accordingly.
+
+== Technical and Functional Architecture
+
+=== Technical Architecture
+
+1. **Microservices Architecture**:
+   - *Authorization Service*: Centralized service responsible for managing permissions and roles.
+   - *User Service*: Manages user data and authentication.
+   - *Resource Services*: Individual microservices for servers, categories and channels, each communicating with the Authorization Service to enforce access control.
+
+2. **Database**:
+   - Use a relational database (e.g., PostgreSQL) to store user roles, permissions, and access control lists (ACLs).
+
+3. **API Gateway**:
+   - Acts as a single entry point for all client requests, routing them to the appropriate microservice and handling authentication and authorization checks.
+
+4. **JWT (JSON Web Tokens)**:
+   - Used for securely transmitting information between parties as a JSON object. It can be signed using a secret or a public/private key pair.
+
+5. **OAuth 2.0**:
+   - An authorization framework that enables applications to obtain limited access to user accounts on an HTTP service.
+
+6. **Caching**:
+   - Use a caching layer (e.g., Redis) to store frequently accessed permissions data to improve performance.
+
+=== Functional Architecture
+
+1. **Role-Based Access Control (RBAC)**:
+   - Define roles (e.g., admin, moderator, user) with associated permissions.
+   - Assign roles to users or groups of users.
+
+2. **Access Control Lists (ACLs)**:
+   - Define permissions at a granular level (e.g., server, category, channel).
+   - Allow or deny access based on user roles and ACLs.
+
+3. **Global Permissions**:
+   - Define global permissions for platform administrators, allowing them to manage all resources across the platform.
+
+== Sequence Diagrams
+
+=== User Login and Authorization Check
+
+[plantuml, user-login-sequence, png]
+----
+User                API Gateway               User Service                Auth Service                Resource Service
+ |                       |                          |                             |                             |
+ |---(1) Login Request-->|                          |                             |                             |
+ |                       |---(2) Authenticate User->|                             |                             |
+ |                       |                          |---(3) Verify Credentials-->|                             |
+ |                       |                          |                             |---(4) Fetch User Permissions|
+ |                       |                          |<--(5) Return JWT Token-----|                             |
+ |                       |<--(6) Return JWT Token---|                             |                             |
+ |<--(7) Return JWT Token|                          |                             |                             |
+ |                       |                          |                             |                             |
+ |---(8) Access Resource Request (with JWT)-------->|                          |                             |                             |
+ |                       |---(9) Validate Permissions->                          |                             |                             |
+ |                       |                          |                             |---(10) Fetch User Permissions|
+ |                       |                          |                             |<--(11) Permission Validation Result|
+ |                       |<--(12) Permission Validation Result                   |                             |                             |
+ |                       |---(13) Forward Request (if authorized)--------------->|                             |                             |
+ |                       |                          |                             |                             |<--(14) Return Resource Data|
+ |<--(15) Return Resource Data                      |                          |                             |                             |
+
+----
+
+=== Managing Permissions by Server, Category, and Channel
+
+[plantuml, manage-permissions-sequence, png]
+----
+Admin               API Gateway               Auth Service
+ |                       |                          |
+ |---(1) Update Permissions Request-->|                          |
+ |                       |---(2) Update Permissions->|
+ |                       |                          |---(3) Store Updated Permissions|
+ |                       |                          |<--(4) Confirmation-----------|
+ |                       |<--(5) Confirmation-------|                          |
+ |<--(6) Confirmation----|                          |                          |
+
+----
+
+=== Global Permissions for Platform Administrators
+
+[plantuml, global-permissions-sequence, png]
+----
+Admin               API Gateway               Auth Service                Resource Service
+ |                       |                          |                             |
+ |---(1) Access Global Resource Request-->|                          |                             |
+ |                       |---(2) Validate Global Permissions->                          |                             |
+ |                       |                          |---(3) Fetch Global Permissions|                             |
+ |                       |                          |<--(4) Permission Validation Result|                             |
+ |                       |<--(5) Permission Validation Result                   |                             |
+ |                       |---(6) Forward Request (if authorized)--------------->|                             |
+ |                       |                          |                             |<--(7) Return Resource Data|
+ |<--(8) Return Resource Data                      |                          |                             |
+
+----
+
+== Recommended Technologies
+
+1. **Backend Framework**:
+   - AdonisJS for building microservices in Node.js.
+
+2. **Database**:
+   - PostgreSQL for storing user data, roles, and permissions.
+
+3. **Authentication and Authorization**:
+   - OAuth 2.0 and JWT for secure authentication and authorization. Use of Keycloak for OIDC support.
+
+4. **API Gateway**:
+   - NGINX for managing API requests and enforcing security policies.
+
+5. **Caching**:
+   - Redis for caching frequently accessed permissions data.
+
+6. **Monitoring and Logging**:
+   - The LGTM stack for monitoring and logging.
+

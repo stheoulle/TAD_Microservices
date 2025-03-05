@@ -38,6 +38,8 @@ OpenID Connect enables an Internet identity ecosystem. It follows these steps:
 
 Keycloak is an open-source Identity and Access Management solution that makes it easy to secure applications and services with little to no code.
 
+https://www.keycloak.org/server/containers 
+
 === How does Keycloak work?
 
 Keycloak works by providing an authentication server that can be used to secure applications and services. It supports OpenID Connect, OAuth 2.0, and SAML 2.0 protocols, making it easy to integrate with existing systems.
@@ -85,7 +87,7 @@ To secure an application with Keycloak, we need to follow these steps:
 
 == Architecture Diagram
 
-=== Identify the components:
+=== Identifying the components:
 - **Client (Frontend)**: User interface (web or mobile).
 - **Application Server (Backend)**: Business logic and API.
 - **Keycloak Server**: Authentication and authorization server.
@@ -99,7 +101,7 @@ To secure an application with Keycloak, we need to follow these steps:
 
 == Deployment Diagram
 
-=== Identify the infrastructure:
+=== Identifying the infrastructure:
 - Physical or virtual servers.
 - Cloud services (AWS, Azure, GCP).
 - Containers (Docker, Kubernetes).
@@ -110,24 +112,147 @@ To secure an application with Keycloak, we need to follow these steps:
 
 == Sequence Diagram
 
-=== Scenarios to cover:
-- User account creation (vanilla, via Polytech, via Google).
-- User login (vanilla, Polytech).
-- Association of a Google account with a Beep account.
+User creates Beep account (vanilla)
 
-=== Define the actors and components:
-- User, Client, Application Server, Keycloak, Google OAuth, Polytech LDAP.
+[plantuml, sequence-diagram-vanilla-account-creation, png]
+----
+User                Beep Client                User Auth Service           Database
+ |                       |                          |                             |
+ |---(1) Submit Reg Form->|                          |                             |
+ |                       |---(2) Create Account---->|                             |
+ |                       |                          |---(3) Save User Data------>|
+ |                       |                          |<--(4) Confirm Data Saved---|
+ |                       |<--(5) Account Created----|                             |
+ |<--(6) Success Message-|                          |                             |
+----
 
-=== Describe the steps:
-- For each scenario, list the interaction steps between the components.
-- For example, for account creation via Google:
-  1. The user clicks on "Sign up with Google."
-  2. The client redirects to Google OAuth.
-  3. Google authenticates the user and redirects to Keycloak with an authorization code.
-  4. Keycloak exchanges the code for a token.
-  5. Keycloak creates a user account in Beep.
-  6. The user is redirected to the application with an access token.
+User creates Beep account (via Polytech account)
+
+[plantuml, sequence-diagram-polytech-account-creation, png]
+----
+User                Beep Client                Keycloak (OIDC)              Polytech OIDC
+ |                       |                          |                             |
+ |---(1) Select Polytech->|                          |                             |
+ |                       |---(2) Redirect Login--->|                             |
+ |                       |                          |---(3) Polytech Login Page->|
+ |---(4) Enter Credentials|                          |                             |
+ |                       |                          |<--(5) Authenticate User----|
+ |                       |<--(6) Auth Token---------|                             |
+ |                       |---(7) Create Account---->|                             |
+ |                       |                          |---(8) Save User Data------>|
+ |                       |                          |<--(9) Confirm Data Saved---|
+ |                       |<--(10) Account Created---|                             |
+ |<--(11) Success Message|                          |                             |
+----
+
+User creates Beep account (via Google account)
+
+[plantuml, sequence-diagram-google-account-creation, png]
+----
+User                Beep Client                Keycloak (OIDC)              Google OIDC
+ |                       |                          |                             |
+ |---(1) Select Google->|                          |                             |
+ |                       |---(2) Redirect Login--->|                             |
+ |                       |                          |---(3) Google Login Page--->|
+ |---(4) Enter Credentials|                          |                             |
+ |                       |                          |<--(5) Authenticate User----|
+ |                       |<--(6) Auth Token---------|                             |
+ |                       |---(7) Create Account---->|                             |
+ |                       |                          |---(8) Save User Data------>|
+ |                       |                          |<--(9) Confirm Data Saved---|
+ |                       |<--(10) Account Created---|                             |
+ |<--(11) Success Message|                          |                             |
+----
+
+User logs in (vanilla)
+
+[plantuml, sequence-diagram-vanilla-login, png]
+----
+User                Beep Client                User Auth Service           Database
+ |                       |                          |                             |
+ |---(1) Enter Credentials->|                          |                             |
+ |                       |---(2) Login Request----->|                             |
+ |                       |                          |---(3) Verify Credentials-->|
+ |                       |                          |<--(4) Confirm Credentials--|
+ |                       |<--(5) Login Success------|                             |
+ |<--(6) Display Dashboard|                          |                             |
+----
+
+User logs in (Polytech)
+
+[plantuml, sequence-diagram-polytech-login, png]
+----
+User                Beep Client                Keycloak (OIDC)              Polytech OIDC
+ |                       |                          |                             |
+ |---(1) Select Polytech->|                          |                             |
+ |                       |---(2) Redirect Login--->|                             |
+ |                       |                          |---(3) Polytech Login Page->|
+ |---(4) Enter Credentials|                          |                             |
+ |                       |                          |<--(5) Authenticate User----|
+ |                       |<--(6) Auth Token---------|                             |
+ |                       |---(7) Validate Token---->|                             |
+ |                       |<--(8) Login Success------|                             |
+ |<--(9) Display Dashboard|                          |                             |
+----
+
+User associates their Google account with their Beep account
+
+[plantuml, sequence-diagram-google-account-linking, png]
+----
+User                Beep Client                Keycloak (OIDC)              Google OIDC
+ |                       |                          |                             |
+ |---(1) Initiate Linking->|                          |                             |
+ |                       |---(2) Redirect Login--->|                             |
+ |                       |                          |---(3) Google Login Page--->|
+ |---(4) Enter Credentials|                          |                             |
+ |                       |                          |<--(5) Authenticate User----|
+ |                       |<--(6) Auth Token---------|                             |
+ |                       |---(7) Link Google Account->|                             |
+ |                       |                          |---(8) Save Linked Info---->|
+ |                       |                          |<--(9) Confirm Data Saved---|
+ |                       |<--(10) Linking Success---|                             |
+ |<--(11) Success Message|                          |                             |
+----
+
+
+
 
 == POC (Proof of Concept)
 
-== OIDC
+== OpenID Connect (OIDC)
+
+OpenID Connect (OIDC) is an authentication protocol built on top of the OAuth 2.0 framework. It provides a standardized method for verifying the identity of users and obtaining basic profile information in a secure and interoperable manner.
+
+=== Key Features
+
+- **Identity Verification**: OIDC allows applications to verify the identity of users based on authentication performed by an Authorization Server. This is done using JSON Web Tokens (JWTs), which contain claims about the user's identity.
+
+- **Interoperability**: OIDC is designed to work across different platforms and devices, making it a versatile solution for modern applications. It supports a wide range of clients, including web applications, mobile apps, and JavaScript applications.
+
+- **Security and Privacy**: OIDC enhances security by removing the need for applications to manage user passwords. Instead, it relies on tokens issued by an Identity Provider (IdP), which can be easily revoked or refreshed.
+
+- **Single Sign-On (SSO)**: OIDC supports SSO, allowing users to authenticate once and gain access to multiple applications without needing to log in again. This improves user experience and reduces the administrative burden of managing multiple credentials.
+
+- **Standardization**: OIDC is a standard protocol maintained by the OpenID Foundation, ensuring compatibility and ease of integration with various systems and services.
+
+=== How It Works
+
+1. **Authentication Request**: A client application (Relying Party) initiates an authentication request to the OpenID Provider (OP).
+
+2. **User Authentication**: The OP authenticates the user and obtains their consent to share specific information with the client application.
+
+3. **Token Issuance**: Upon successful authentication, the OP issues tokens to the client application. These tokens include an ID token, which contains user identity information, and optionally an access token for API access.
+
+4. **Identity Verification**: The client application uses the ID token to verify the user's identity and can use the access token to access protected resources on behalf of the user.
+
+=== Benefits
+
+- **Simplified Integration**: OIDC simplifies the integration of authentication and authorization in applications, reducing development time and effort.
+
+- **Enhanced Security**: By relying on tokens instead of passwords, OIDC reduces the risk of credential-based data breaches.
+
+- **User Consent**: OIDC includes built-in user consent mechanisms, ensuring that users have control over their personal data.
+
+=== Conclusion
+
+OpenID Connect is a powerful and flexible authentication protocol that enhances security, interoperability, and user experience in modern applications. Its adoption by major technology companies and its standardization make it a reliable choice for identity management in various scenarios.
